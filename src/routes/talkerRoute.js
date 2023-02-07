@@ -45,10 +45,26 @@ talkerRoute.put('/:id', auth, validatonName, validationAge, validateTalk,
       const index = talkers.findIndex((element) => element.id === Number(id));
       talkers[index] = { id: Number(id), name, age, talk };
       await talkerWrite([...talkers, talkers[index]]);
-      res.status(200).json(talkers[index]);
+      return res.status(200).json(talkers[index]);
     } catch (error) {
       return null;
     }
   });
+
+talkerRoute.delete('/:id', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const talkers = await talkerRead();
+    const filteredID = talkers.findIndex((element) => element.id !== Number(id));
+    await talkerWrite(filteredID);
+    return res.status(204).json();
+  } catch (error) {
+    return null;
+  }
+});
+
+// talkerRoute.get('/search?q=searchTerm', async (req, res) => {
+
+// });
 
 module.exports = talkerRoute;
