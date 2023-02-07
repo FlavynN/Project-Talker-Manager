@@ -1,22 +1,15 @@
 const express = require('express');
-const path = require('path');
-const fs = require('fs/promises');
+const talkerRead = require('../utils/talkerRead');
+const talkerWrite = require('../utils/talkerWrite');
+const { auth, validatonName, validationAge,
+  validateTalk, validateWatchedAt,
+  validateRate } = require('../middlewares/validatorTalker');
 
 const talkerRoute = express.Router();
 const HTTP_OK_STATUS = 200;
 
-const talkerRouteFile = async () => {
-  const talkerPath = path.resolve(__dirname, '../talker.json');
-  try {
-    const talker = await fs.readFile(talkerPath, 'utf8');
-    return JSON.parse(talker);
-  } catch (error) {
-    return null;
-  }
-};
-
 talkerRoute.get('/', async (req, res) => {
-  const talker = await talkerRouteFile();
+  const talker = await talkerRead();
   try {
     res.status(HTTP_OK_STATUS).json(talker);
   } catch (error) {
@@ -26,7 +19,7 @@ talkerRoute.get('/', async (req, res) => {
 
 talkerRoute.get('/:id', async (req, res) => {
   const id = Number(req.params.id);
-  const talkers = await talkerRouteFile();
+  const talkers = await talkerRead();
   const talkerFind = talkers.find((t) => t.id === id);
   if (talkerFind) {
     res.status(HTTP_OK_STATUS).json(talkerFind);
@@ -34,5 +27,13 @@ talkerRoute.get('/:id', async (req, res) => {
     res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
 });
+
+talkerRoute.post('/', auth, validatonName, validationAge, validateTalk,
+  validateWatchedAt, validateRate, async (req, res) => {
+    const talkers = await talkerRead();
+    const newTalker = { id: talkers.length + 1, ...req.body };
+    await talkerWrite([...talkers, newTalker]);
+    res.status(201).json(newTalker);
+  });
 
 module.exports = talkerRoute;

@@ -1,6 +1,7 @@
 const express = require('express');
 const { tokenGenerator } = require('../utils/token');
-const { validationEmail, validationLogin, validationPassword } = require('../utils/validator');
+const { validationEmail, validationLogin,
+  validationPassword } = require('../middlewares/validatorLogin');
 
 const loginRoute = express.Router();
 const HTTP_OK_STATUS = 200;
