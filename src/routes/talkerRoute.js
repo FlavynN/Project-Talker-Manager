@@ -8,7 +8,7 @@ const { auth, validatonName, validationAge,
 const talkerRoute = express.Router();
 const HTTP_OK_STATUS = 200;
 
-talkerRoute.get('/', async (req, res) => {
+talkerRoute.get('/', async (_req, res) => {
   const talker = await talkerRead();
   try {
     res.status(HTTP_OK_STATUS).json(talker);
@@ -34,6 +34,21 @@ talkerRoute.post('/', auth, validatonName, validationAge, validateTalk,
     const newTalker = { id: talkers.length + 1, ...req.body };
     await talkerWrite([...talkers, newTalker]);
     res.status(201).json(newTalker);
+  });
+
+talkerRoute.put('/:id', auth, validatonName, validationAge, validateTalk,
+  validateWatchedAt, validateRate, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, age, talk } = req.body;
+      const talkers = await talkerRead();
+      const index = talkers.findIndex((element) => element.id === Number(id));
+      talkers[index] = { id: Number(id), name, age, talk };
+      await talkerWrite([...talkers, talkers[index]]);
+      res.status(200).json(talkers[index]);
+    } catch (error) {
+      return null;
+    }
   });
 
 module.exports = talkerRoute;
