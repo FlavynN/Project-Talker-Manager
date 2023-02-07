@@ -4,9 +4,6 @@ const fs = require('fs/promises');
 
 const talkerRoute = express.Router();
 const HTTP_OK_STATUS = 200;
-const errorMessage = {
-  message: 'Pessoa palestrante não encontrada',
-};
 
 const talkerRouteFile = async () => {
   const talkerPath = path.resolve(__dirname, '../talker.json');
@@ -34,7 +31,7 @@ talkerRoute.get('/:id', async (req, res) => {
   if (talkerFind) {
     res.status(HTTP_OK_STATUS).json(talkerFind);
   } else {
-    res.status(404).json(errorMessage);
+    res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
   }
 });
 
