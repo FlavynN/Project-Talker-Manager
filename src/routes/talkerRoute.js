@@ -38,17 +38,19 @@ talkerRoute.post('/', auth, validatonName, validationAge, validateTalk,
 
 talkerRoute.put('/:id', auth, validatonName, validationAge, validateTalk,
   validateWatchedAt, validateRate, async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { name, age, talk } = req.body;
-      const talkers = await talkerRead();
-      const index = talkers.findIndex((element) => element.id === Number(id));
-      talkers[index] = { id: Number(id), name, age, talk };
-      await talkerWrite([...talkers, talkers[index]]);
-      return res.status(200).json(talkers[index]);
-    } catch (error) {
-      return null;
+    const { id } = req.params;
+    const { name, age, talk } = req.body;
+    const talkers = await talkerRead();
+    const updateTalker = talkers.find((talker) => talker.id === Number(id));
+
+    if (!updateTalker) {
+      res.status(404).json({ message: 'Talker Not Found' });
     }
+    updateTalker.name = name;
+    updateTalker.age = age;
+    updateTalker.talk = talk;
+    await talkerWrite([updateTalker]);
+    return res.status(200).json(updateTalker);
   });
 
 talkerRoute.delete('/:id', auth, async (req, res) => {
