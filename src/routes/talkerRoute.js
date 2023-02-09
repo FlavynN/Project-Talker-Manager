@@ -8,6 +8,17 @@ const { auth, validatonName, validationAge,
 const talkerRoute = express.Router();
 const HTTP_OK_STATUS = 200;
 
+talkerRoute.get('/search', auth, async (req, res) => {
+  const { q } = req.query;
+  const talkers = await talkerRead();
+  if (q) {
+    const filteredTalker = talkers.filter((element) => element
+      .name.toLowerCase().includes(q.toLowerCase()));
+    return res.status(200).json(filteredTalker);
+  }
+  return res.status(200).json(talkers);
+});
+
 talkerRoute.get('/', async (_req, res) => {
   const talker = await talkerRead();
   try {
@@ -44,7 +55,7 @@ talkerRoute.put('/:id', auth, validatonName, validationAge, validateTalk,
     const updateTalker = talkers.find((talker) => talker.id === Number(id));
 
     if (!updateTalker) {
-      res.status(404).json({ message: 'Talker Not Found' });
+      res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
     }
     updateTalker.name = name;
     updateTalker.age = age;
@@ -64,9 +75,5 @@ talkerRoute.delete('/:id', auth, async (req, res) => {
     return null;
   }
 });
-
-// talkerRoute.get('/search?q=searchTerm', async (req, res) => {
-
-// });
 
 module.exports = talkerRoute;
