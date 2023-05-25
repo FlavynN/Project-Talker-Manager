@@ -1,6 +1,6 @@
 # Project Talker Manager
 
-is a CRUD API to manage a list of people who is going to talk in a show, The objective of this project was create the API for this Show.
+is a CRUD API to manage a list of people who is going to talk in a show, The objective of this project was create the API for the Managers where they can update the list since they are logged in.
 
 
 ## Technologies Used
@@ -11,6 +11,7 @@ is a CRUD API to manage a list of people who is going to talk in a show, The obj
 ## What was built?
 
 * API CRUD
+* Login Validation
 
 
 ## How to run the project?
